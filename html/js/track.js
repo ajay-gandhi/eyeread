@@ -5,7 +5,10 @@
 var DRAW_FACE = true;
 
 // Physical size decrease when looking down
-var EYE_CONTRACTION = 0.7;
+var EYE_CONTRACTION = 100;
+
+// Recalibration timeout in seconds
+var RECAL_TIMEOUT = 10;
 
 ///////////////////////////// Initialize Tracking //////////////////////////////
 
@@ -56,6 +59,7 @@ function drawLoop() {
 ///////////////////////////////// Eye Tracking /////////////////////////////////
 
 var calibrated = false;
+var recalibrate_timeout;
 var eye_nose_ratio;
 
 /**
@@ -66,12 +70,17 @@ function startTrackingEyes() {
     requestAnimationFrame(trackEyes);
 
   } else {
-    requestAnimationFrame(startTrackingEyes);
-    calibrated = true;
 
     // record initial positions
     var curr_pos = ctracker.getCurrentPosition();
-    eye_nose_ratio = getTotalRatio(curr_pos);
+    if (curr_pos) {
+      setTimeout(reg_cal, 1000);
+      console.log('wait 1 sec');
+      // eye_nose_ratio = getTotalRatio(curr_pos);
+      // console.log('first', eye_nose_ratio);
+    } else {
+      requestAnimationFrame(startTrackingEyes);
+    }
   }
 }
 
@@ -85,16 +94,44 @@ function trackEyes() {
 
     // Compare ratios
     var curr_pos = ctracker.getCurrentPosition();
-    var new_ratio = getTotalRatio(curr_pos);
-    if (new_ratio / eye_nose_ratio <= EYE_CONTRACTION) {
-      console.log('Looking down!');
+    if (curr_pos) {
+      var new_ratio = getTotalRatio(curr_pos);
+      if (new_ratio / eye_nose_ratio < EYE_CONTRACTION) {
+        console.log('Looking down!');
+        document.getElementById('long-content').scrollTop += 2;
+      }
     }
 
   } else {
     // Need to calibrate
+    console.log('Recalibrate');
     requestAnimationFrame(startTrackingEyes);
   }
 }
+
+function reg_cal() {
+  var curr_pos = ctracker.getCurrentPosition();
+  eye_nose_ratio = getTotalRatio(curr_pos);
+  console.log('first', eye_nose_ratio);
+}
+
+function calibrate() {
+  requestAnimationFrame(trackEyes);
+  calibrated = true;
+  var curr_pos = ctracker.getCurrentPosition();
+  var new_ratio = getTotalRatio(curr_pos);
+  console.log(new_ratio);
+  EYE_CONTRACTION = new_ratio / eye_nose_ratio;
+}
+
+// recalibrate_timeout = window.setTimeout(recalibrate, RECAL_TIMEOUT * 1000);
+// function recalibrate() {
+//   window.clearTimeout(recalibrate_timeout);
+
+//   calibrated = false;
+//   // Recalibrate every RECAL_TIMEOUT seconds
+//   recalibrate_timeout = window.setTimeout(recalibrate, RECAL_TIMEOUT * 1000);
+// }
 
 /////////////////////////////// Helper Functions ///////////////////////////////
 
@@ -102,6 +139,6 @@ function trackEyes() {
  * Computes the ratio of eye size to eye-nose distance
  */
 function getTotalRatio(positions) {
-  return (positions[24][1] - positions[26][1]) / 
-         (positions[26][1] - positions[37][1]);
+  return (positions[26][1] - positions[37][1]) / 
+         (positions[24][1] - positions[37][1]);
 }

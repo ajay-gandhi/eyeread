@@ -14,8 +14,8 @@ var main_window  = null,
 app.on('ready', function() {
   // Create the main window
   main_window = new BrowserWindow({
-    width:  400,
-    height: 300,
+    width:  900,
+    height: 800,
     'title-bar-style': 'hidden'
   });
 
