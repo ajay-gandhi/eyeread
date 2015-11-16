@@ -1,0 +1,32 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>eyeread</title>
+  <script src="js/model_pca_20_svm.js"></script>
+  <script src="js/clmtrackr.min.js"></script>
+  <style>
+  body {
+    margin: 0;
+  }
+
+  #draw-layer {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    transform: scaleX(-1);
+  }
+
+  #webcam {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    transform: scaleX(-1);
+  }
+  </style>
+</head>
+<body>
+  <video id="webcam" width="400" height="300" preload="auto" loop></video>
+  <canvas id="draw-layer" width="400" height="300"></canvas>
+  <script src="js/track.js"></script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+{
+  "name": "eyeread",
+  "version": "0.0.1",
+  "description": "",
+  "main": "app.js",
+  "dependencies": {
+    "express": "^4.13.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ajay-gandhi/eyeread.git"
+  },
+  "keywords": [
+    "read",
+    "scroll"
+  ],
+  "author": "Ajay Gandhi",
+  "license": "ISC"
+}
