@@ -12,8 +12,8 @@ var RECAL_TIMEOUT = 10;
 
 ///////////////////////////// Initialize Tracking //////////////////////////////
 
-var vid = document.getElementById('webcam');
-var drawLayer = document.getElementById('draw-layer');
+var vid = $('#webcam').get(0);
+var drawLayer = $('#draw-layer').get(0);
 var drawLayerCC = drawLayer.getContext('2d');
 
 var ctracker = new clm.tracker({ useWebGL : true });
@@ -39,8 +39,6 @@ function startVideo() {
   ctracker.start(vid);
   // start loop to draw face
   drawLoop();
-  // start loop to keep track of eyes
-  startTrackingEyes();
 }
 
 /**
@@ -58,80 +56,58 @@ function drawLoop() {
 
 ///////////////////////////////// Eye Tracking /////////////////////////////////
 
-var calibrated = false;
-var recalibrate_timeout;
+var step_one = false;
+var step_two = false;
+var first_time = true;
 var eye_nose_ratio;
 
-/**
- * Calibrates the tracker
- */
-function startTrackingEyes() {
-  if (calibrated) {
-    requestAnimationFrame(trackEyes);
+$(document).keypress(function (e) {
+  if (e.keyCode == 99) {
+    // Calibrate
+    // Do first step if completely uncalibrated
+    //   or if completely calibrated and recalibrating (step_two = true)
+    if (!step_one || step_two) {
+      step_one = true;
+      step_two = false;
+      var curr_pos = ctracker.getCurrentPosition();
+      eye_nose_ratio = getTotalRatio(curr_pos);
+      $('#long-content').css('border', '2px solid blue');
 
-  } else {
-
-    // record initial positions
-    var curr_pos = ctracker.getCurrentPosition();
-    if (curr_pos) {
-      setTimeout(reg_cal, 1000);
-      console.log('wait 1 sec');
-      // eye_nose_ratio = getTotalRatio(curr_pos);
-      // console.log('first', eye_nose_ratio);
     } else {
-      requestAnimationFrame(startTrackingEyes);
+      step_two = true;
+
+      // Do second step
+      if (first_time) {
+        requestAnimationFrame(trackEyes);
+        first_time = false;
+      }
+
+      var curr_pos = ctracker.getCurrentPosition();
+      var new_ratio = getTotalRatio(curr_pos);
+      EYE_CONTRACTION = new_ratio / eye_nose_ratio;
+      $('#long-content').css('border', '2px solid green');
     }
   }
-}
+});
 
 /**
  * Tracks eyes and looks for a down or up look. Should only be run after the
  * system is calibrated.
  */
 function trackEyes() {
-  if (calibrated) {
+  if (step_two) {
     requestAnimationFrame(trackEyes);
 
     // Compare ratios
     var curr_pos = ctracker.getCurrentPosition();
     if (curr_pos) {
       var new_ratio = getTotalRatio(curr_pos);
-      if (new_ratio / eye_nose_ratio < EYE_CONTRACTION) {
-        console.log('Looking down!');
-        document.getElementById('long-content').scrollTop += 2;
+      if (new_ratio / eye_nose_ratio <= EYE_CONTRACTION) {
+        $('long-content').get(0).scrollTop += 5;
       }
     }
-
-  } else {
-    // Need to calibrate
-    console.log('Recalibrate');
-    requestAnimationFrame(startTrackingEyes);
   }
 }
-
-function reg_cal() {
-  var curr_pos = ctracker.getCurrentPosition();
-  eye_nose_ratio = getTotalRatio(curr_pos);
-  console.log('first', eye_nose_ratio);
-}
-
-function calibrate() {
-  requestAnimationFrame(trackEyes);
-  calibrated = true;
-  var curr_pos = ctracker.getCurrentPosition();
-  var new_ratio = getTotalRatio(curr_pos);
-  console.log(new_ratio);
-  EYE_CONTRACTION = new_ratio / eye_nose_ratio;
-}
-
-// recalibrate_timeout = window.setTimeout(recalibrate, RECAL_TIMEOUT * 1000);
-// function recalibrate() {
-//   window.clearTimeout(recalibrate_timeout);
-
-//   calibrated = false;
-//   // Recalibrate every RECAL_TIMEOUT seconds
-//   recalibrate_timeout = window.setTimeout(recalibrate, RECAL_TIMEOUT * 1000);
-// }
 
 /////////////////////////////// Helper Functions ///////////////////////////////
 

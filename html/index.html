@@ -4,6 +4,7 @@
   <title>eyeread</title>
   <script src="js/model_pca_20_svm.js"></script>
   <script src="js/clmtrackr.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/zepto/1.1.6/zepto.js"></script>
   <style>
   body {
     margin: 0;
@@ -23,16 +24,6 @@
     transform: scaleX(-1);
   }
 
-  #recalibrate {
-    position: absolute;
-    top: 310px;
-  }
-  #calibrate {
-    position: absolute;
-    top: 310px;
-    left: 100px;
-  }
-
   #long-content {
     position: absolute;
     top: 0px;
@@ -47,8 +38,7 @@
 <body>
   <video id="webcam" width="400" height="300" preload="auto" loop></video>
   <canvas id="draw-layer" width="400" height="300"></canvas>
-  <button id="recalibrate" onclick="recalibrate()">Recalibrate</button>
-  <button id="calibrate" onclick="calibrate()">CALIBRATE</button>
+  <script src="js/track.js"></script>
   <div id="long-content">
     George Washington (February 22, 1732 [O.S. February 11, 1731][b][c] – December 14, 1799) was the first President of the United States (1789–97), the Commander-in-Chief of the Continental Army during the American Revolutionary War, and one of the Founding Fathers of the United States. He presided over the convention that drafted the current United States Constitution and during his lifetime was called the "father of his country".[4]
 
@@ -104,6 +94,5 @@
 
     Historian Ron Chernow is of the opinion that his frustrations in dealing with government officials during this conflict led him to advocate the advantages of a strong national government and a vigorous executive agency that could get results;[47] other historians tend to ascribe Washington's position on government to his later American Revolutionary War service.[d] He developed a very negative idea of the value of militia, who seemed too unreliable, too undisciplined, and too short-term compared to regulars.[54] On the other hand, his experience was limited to command of at most 1000 men, and came only in remote frontier conditions that were far removed from the urban situations he faced during the Revolution at Boston, New York, Trenton and Philadelphia.[55]
   </div>
-  <script src="js/track.js"></script>
 </body>
 </html>
