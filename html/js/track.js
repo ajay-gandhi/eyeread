@@ -7,8 +7,8 @@ var DRAW_FACE = true;
 // Physical size decrease when looking down
 var EYE_CONTRACTION = 100;
 
-// Recalibration timeout in seconds
-var RECAL_TIMEOUT = 10;
+// Ratio to increase above constant by
+var MAGIC_RATIO = 1.005;
 
 ///////////////////////////// Initialize Tracking //////////////////////////////
 
@@ -85,6 +85,7 @@ $(document).keypress(function (e) {
       var curr_pos = ctracker.getCurrentPosition();
       var new_ratio = getTotalRatio(curr_pos);
       EYE_CONTRACTION = new_ratio / eye_nose_ratio;
+      EYE_CONTRACTION *= MAGIC_RATIO;
       $('#long-content').css('border', '2px solid green');
     }
   }
@@ -103,7 +104,7 @@ function trackEyes() {
     if (curr_pos) {
       var new_ratio = getTotalRatio(curr_pos);
       if (new_ratio / eye_nose_ratio <= EYE_CONTRACTION) {
-        $('long-content').get(0).scrollTop += 5;
+        $('#long-content').get(0).scrollTop += 5;
       }
     }
   }
