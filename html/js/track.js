@@ -1,4 +1,6 @@
 
+var ipc = require('ipc');
+
 //////////////////////////////// Configuration /////////////////////////////////
 
 // Draws face tracking on video if true
@@ -104,6 +106,8 @@ function trackEyes() {
     if (curr_pos) {
       var new_ratio = getTotalRatio(curr_pos);
       if (new_ratio / eye_nose_ratio <= EYE_CONTRACTION) {
+        // Tell main process to scroll
+        ipc.send('scroll', 'true');
         $('#long-content').get(0).scrollTop += 5;
       }
     }

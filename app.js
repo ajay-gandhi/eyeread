@@ -3,15 +3,14 @@
 // Electron modules
 var app            = require('app'),
     BrowserWindow  = require('browser-window'),
-    Tray           = require('tray'),
-    Menu           = require('menu'),
-    globalShortcut = require('global-shortcut');
+    ipc            = require('ipc');
 
-var main_window  = null,
-    menubar      = null,
-    login_window = null;
+// NPM modules
+var applescript = require('applescript');
 
-app.on('ready', function() {
+var main_window = null;
+
+app.on('ready', function () {
   // Create the main window
   main_window = new BrowserWindow({
     width:  900,
@@ -21,3 +20,13 @@ app.on('ready', function() {
 
   main_window.loadUrl('file://' + __dirname + '/html/index.html');
 });
+
+//////////////////////////////////// Events ////////////////////////////////////
+
+// // Scroll window
+// ipc.on('scroll', function (should) {
+//   // Not really necessary
+//   applescript.execFile(__dirname + '/scroll.scpt', function (err, value) {
+//     if (err) console.log('Error:', err);
+//   });
+// });
